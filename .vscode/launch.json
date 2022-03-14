@@ -15,5 +15,11 @@
             "type": "dart",
             "flutterMode": "profile"
         }
+        {
+            "name": "All Tests",
+            "type": "dart",
+            "request": "launch",
+            "program": "test/",
+        }
     ]
 }
