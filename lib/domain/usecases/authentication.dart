@@ -1,5 +1,4 @@
 import 'package:meta/meta.dart';
-import 'package:meta/meta.dart';
 
 import '../entities/entities.dart';
 
@@ -15,4 +14,6 @@ class AuthenticationParams {
     @required this.email,
     @required this.password,
   });
+
+  Map toJson() => {'email': email, 'password': password};
 }
