@@ -1,11 +1,13 @@
 import 'package:faker/faker.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
+import 'package:udemy_cervantes/data/usecases/remote_authentication.dart';
 import 'package:udemy_cervantes/domain/usecases/authentication.dart';
+import 'package:udemy_cervantes/data/http/http.dart';
+import 'package:udemy_cervantes/data/usecases/usecases.dart';
 
-void mani() {
+void main() {
   HttpClientSpy httpClient;
   String url;
   RemoteAuthencation sut;
@@ -20,29 +22,6 @@ void mani() {
     await sut.auth(params);
 
     verify(httpClient.request(url: url, method: 'post', body: {'email': params.email, "password": params.password}));
-  });
-}
-
-class RemoteAuthencation {
-  final HttpClient httpClient;
-  final String url;
-
-  RemoteAuthencation({@required this.httpClient, @required this.url});
-
-  Future<void> auth(AuthenticationParams params) async {
-    await httpClient.request(
-      url: url,
-      method: 'post',
-      body: params.toJson(),
-    );
-  }
-}
-
-abstract class HttpClient {
-  Future<void> request({
-    @required String url,
-    @required String method,
-    Map body,
   });
 }
 
