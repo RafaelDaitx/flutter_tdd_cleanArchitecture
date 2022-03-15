@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -6,15 +8,38 @@ import 'package:mockito/mockito.dart';
 import 'package:meta/meta.dart';
 
 void main() {
+  ClientSpy client;
+  HttpAdapter sut;
+  String url;
+
+  setUp(() {
+    client = ClientSpy();
+    sut = HttpAdapter(client);
+    url = faker.internet.httpUrl();
+  });
+
   group('post', () {
     test('Should call post with correct values', () async {
-      final client = ClientSpy();
-      final sut = HttpAdapter(client);
-      final url = faker.internet.httpUrl();
+      await sut.request(url: url, method: 'post', body: {'any_key': 'any_value'});
 
+      verify(
+        client.post(
+          url,
+          headers: {'content-type': 'application/json', 'accept': 'application/json'},
+          body: '{"any_key":"any_value"}',
+        ),
+      );
+    });
+
+    test('Should call post with without body', () async {
       await sut.request(url: url, method: 'post');
 
-      verify(client.post(url, headers: {'content-type': 'application/json', 'accept': 'application/json'}));
+      verify(
+        client.post(
+          any,
+          headers: anyNamed('headers'),
+        ),
+      );
     });
   });
 }
@@ -35,6 +60,7 @@ class HttpAdapter {
       'content-type': 'application/json',
       'accept': 'application/json',
     };
-    await client.post(url, headers: headers);
+    final jsinBody = body != null ? jsonEncode(body) : null;
+    await client.post(url, headers: headers, body: jsinBody);
   }
 }
