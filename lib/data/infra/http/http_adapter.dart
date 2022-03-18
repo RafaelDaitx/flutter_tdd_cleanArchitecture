@@ -19,8 +19,8 @@ class HttpAdapter implements HttpClient {
       'content-type': 'application/json',
       'accept': 'application/json',
     };
-    final jsinBody = body != null ? jsonEncode(body) : null;
-    final response = await client.post(url, headers: headers, body: jsinBody);
+    final jsonBody = body != null ? jsonEncode(body) : null;
+    final response = await client.post(url, headers: headers, body: jsonBody);
     return _handleResponse(response);
   }
 
@@ -29,7 +29,12 @@ class HttpAdapter implements HttpClient {
       return response.body.isEmpty ? null : jsonDecode(response.body);
     } else if (response.statusCode == 204) {
       return null;
+    } else if (response.statusCode == 400) {
+      throw HttpError.badRequest;
+    } else if (response.statusCode == 401) {
+      throw HttpError.unauthorized;
+    } else {
+      throw HttpError.serverError;
     }
-    throw HttpError.badRequest;
   }
 }
